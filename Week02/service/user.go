@@ -1,9 +1,6 @@
 package service
 
 import (
-	"database/sql"
-	"errors"
-
 	"Week02/internal/dao"
 	"Week02/internal/model"
 )
@@ -22,9 +19,5 @@ func NewUserService() *UserService {
 
 // GetUser return user info
 func (s *UserService) GetUser(id int) (*model.User, error) {
-	user, err := s.dao.Find(id)
-	if errors.Is(err, sql.ErrNoRows) {
-		return user, nil
-	}
-	return nil, err
+	return s.dao.Find(id)
 }
