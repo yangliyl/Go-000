@@ -34,15 +34,13 @@ func handler(conn net.Conn) {
 	sendCh := make(chan []byte, 10)
 	defer close(sendCh)
 
-	reader := bufio.NewReader(conn)
-
-	go func(conn net.Conn, readCh <-chan []byte, sendCh chan<- []byte) {
+	go func(readCh <-chan []byte, sendCh chan<- []byte) {
 		for msg := range readCh {
 			// TODO 解析数据包
 			log.Printf("recv client msg: %v", string(msg))
 			sendCh <- msg
 		}
-	}(conn, readCh, sendCh)
+	}(readCh, sendCh)
 
 	go func(conn net.Conn, sendCh <-chan []byte) {
 		for msg := range sendCh {
@@ -50,6 +48,7 @@ func handler(conn net.Conn) {
 		}
 	}(conn, sendCh)
 
+	reader := bufio.NewReader(conn)
 	for {
 		line, _, err := reader.ReadLine()
 		if err != nil {
